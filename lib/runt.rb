@@ -31,6 +31,7 @@
 # warranties of merchantibility and fitness for a particular
 # purpose.
 
+require 'yaml'
 require 'time'
 require 'date'
 require 'date/format'
@@ -54,6 +55,8 @@ require "runt/expressionbuilder"
 # <b>See also</b> date.rb
 #
 module Runt
+  
+  VERSION = "0.7.1"
   
   class << self
     
@@ -94,7 +97,7 @@ module Runt
     end
 
   end
-
+  
   #Yes it's true, I'm a big idiot!
   Sunday = Date::DAYNAMES.index("Sunday")
   Monday = Date::DAYNAMES.index("Monday")
@@ -191,6 +194,15 @@ class Time
       @precision=Runt::DPrecision::DEFAULT
     end
     old_initialize(*args)
+  end
+  
+  alias :old_to_yaml :to_yaml
+  def to_yaml(options)
+    if self.instance_variables.empty?
+      self.old_to_yaml(options)
+    else
+      Time.old_parse(self.to_s).old_to_yaml(options)
+    end
   end
 
   class << self

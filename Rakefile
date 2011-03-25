@@ -3,6 +3,8 @@
 begin
   require 'rubygems'
   require 'rake/gempackagetask'
+  require 'hoe'
+  require './lib/runt.rb'
 rescue Exception
   nil
 end
@@ -14,12 +16,13 @@ require 'rake/contrib/sshpublisher'
 require 'rake/contrib/rubyforgepublisher'
 require 'fileutils'
 
+
 #####################################################################
 # Constants
 #####################################################################
 
 # Build Settings
-PKG_VERSION = "0.8.0"
+PKG_VERSION = "0.7.1"
 
 # Files to be included in Runt distribution
 PKG_FILES = FileList[
@@ -41,7 +44,11 @@ end
 # build directory
 TARGET_DIR = "target"
 
-RDOC_OPTS = %w{--main README --title Runt --inline-source --line-numbers}
+# Trying to auto-build with Hoe.
+Hoe.new('runt', PKG_VERSION) do |p|
+   p.rubyforge_name = 'Runt' # if different than lowercase project name
+   p.developer('Matthew Lipper', 'mlipper@gmail.com')
+end
 
 #####################################################################
 # Targets
@@ -61,7 +68,7 @@ end
 
 Rake::RDocTask.new do |rd|
   rd.rdoc_dir="#{TARGET_DIR}/doc"
-  rd.options.concat(RDOC_OPTS)
+  rd.options << "-S"
   rd.rdoc_files.include('lib/*','doc/*.rdoc','README','CHANGES','TODO','LICENSE.txt')
 end
 
@@ -106,7 +113,7 @@ else
     s.email = 'mlipper@gmail.com'
     s.homepage = 'http://runt.rubyforge.org'
     s.has_rdoc = true
-    s.rdoc_options += RDOC_OPTS
+    s.rdoc_options += %w{--main README --title Runt}
     s.extra_rdoc_files = FileList["README","CHANGES","TODO","LICENSE.txt","doc/*.rdoc"]    
     s.test_files = Dir['**/*test.rb']
     s.rubyforge_project = 'runt'

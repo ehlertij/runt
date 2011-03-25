@@ -325,7 +325,8 @@ class DIMonth
   end
 
   def to_s
-    "#{Runt.ordinalize(@week_of_month_index)} #{Runt.day_name(@day_index)} of the month"
+    "Monthly on the #{Runt.ordinalize(@week_of_month_index)} #{Runt.day_name(@day_index)}"
+    #"#{Runt.ordinalize(@week_of_month_index)} #{Runt.day_name(@day_index)} of the month"
   end
 
   private
@@ -333,6 +334,31 @@ class DIMonth
     @day_index == date.wday
   end
 
+end
+
+# TExpr that provides support for building a temporal
+# expression using the form:
+#
+#     DOMonth.new(23)
+#
+# where the argument is the day of the month
+# ie the above will match every 23rd day of the month
+class DOMonth
+
+  include TExpr
+
+  def initialize(day_of_month)
+    @day_of_month = day_of_month
+  end
+
+  def include?(date)
+    @day_of_month == date.day
+  end
+
+  def to_s
+    "Monthly on the #{Runt.ordinalize(@day_of_month)}"
+    #"#{Runt.ordinalize(@week_of_month_index)} #{Runt.day_name(@day_index)} of the month"
+  end
 end
 
 # TExpr that matches days of the week where the first argument
@@ -370,6 +396,24 @@ class DIWeek
     "#{Runt.day_name(@ordinal_weekday)}"
   end
 
+end
+
+class DIYear
+  
+  include TExpr
+  
+  def initialize(month, day)
+    @month = month
+    @day = day
+  end
+  
+  def include?(date)
+    @month == date.mon && @day == date.day
+  end
+  
+  def to_s
+    "Day in year"
+  end
 end
 
 # TExpr that matches days of the week within one
